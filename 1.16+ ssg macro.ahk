@@ -27,7 +27,9 @@ global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.16.11\.
 global delay := 50 ; Delay between keypresses
 global switchDelay := 250
 global seed := -5362871956303579298 ; This is where you put the seed
+global difficulty := 0 ; Normal (0), Hard (1), Peaceful (2), Easy (3)
 global countAttempts := True
+global worldMoving := True
 
 global currInst := -1
 global PIDs := GetAllPIDs()
@@ -39,37 +41,40 @@ IfNotExist, %oldWorldsFolder%
 
 CreateWorld(idx)
 {
-   WinGetPos, X, Y, W, H, Minecraft
-   WaitMenuScreen(W, H)
-   if (idx := GetActiveInstanceNum()) > 0
-   {
+  WinGetPos, X, Y, W, H, Minecraft
+  WaitMenuScreen(W, H)
+  if (idx := GetActiveInstanceNum()) > 0
+  {
     SetKeyDelay, -1
-	pid := PIDs[idx]
-	ControlSend, ahk_parent, {Tab}{Enter}, ahk_pid %pid%
-	DllCall("Sleep",UInt,delay)
-	ControlSend, ahk_parent, {Tab 3}{Enter}, ahk_pid %pid%
-	DllCall("Sleep",UInt,delay)
-	ControlSend, ahk_parent, {Tab 6}{Enter}, ahk_pid %pid%
-	DllCall("Sleep",UInt,delay)
-	ControlSend, ahk_parent, {Tab 3}%seed%, ahk_pid %pid%
-	DllCall("Sleep",UInt,delay)
-	ControlSend, ahk_parent, {Enter}, ahk_pid %pid%
-        sleep, 50
-	nextIdx := Mod(idx, instances) + 1
-	SwitchInstance(nextIdx)
-	MoveWorlds(idx)
-	
-     if (countAttempts)
-     {
-       FileRead, WorldNumber, SSG_attempts.txt
-       if (ErrorLevel)
-         WorldNumber = 0
-       else
-         FileDelete, SSG_attempts.txt
-       WorldNumber += 1
-       FileAppend, %WorldNumber%, SSG_attempts.txt
-     }
-   }
+  	pid := PIDs[idx]
+  	ControlSend, ahk_parent, {Tab}{Enter}, ahk_pid %pid% ; Singleplayer
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Tab 3}{Enter}, ahk_pid %pid% ; World list
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Tab 2}{Enter %difficulty%}, ahk_pid %pid% ; World options
+    DllCall("Sleep",UInt,delay)
+    ControlSend, ahk_parent, {Tab 4}{Enter}, ahk_pid %pid%
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Tab 3}%seed%, ahk_pid %pid% ; Seed
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
+      sleep, 50
+  	nextIdx := Mod(idx, instances) + 1
+  	SwitchInstance(nextIdx)
+    if (worldMoving)
+  	  MoveWorlds(idx)
+
+    if (countAttempts)
+    {
+      FileRead, WorldNumber, SSG_attempts.txt
+      if (ErrorLevel)
+        WorldNumber = 0
+      else
+        FileDelete, SSG_attempts.txt
+      WorldNumber += 1
+      FileAppend, %WorldNumber%, SSG_attempts.txt
+    }
+  }
 }
 
 ExitWorld()
@@ -79,10 +84,10 @@ ExitWorld()
     WinGetTitle, title, ahk_pid %pid%
     if (GetActiveInstanceNum() == idx)
       return
-	  
+
 	Send {Esc}
 	DllCall("Sleep",UInt,delay)
-    send +{Tab}{Enter} 
+    send +{Tab}{Enter}
 	CreateWorld(idx)
 return
 }
@@ -220,4 +225,3 @@ return
   SetTitles()
 return
 }
-
