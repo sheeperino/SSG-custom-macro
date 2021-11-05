@@ -1,16 +1,11 @@
-﻿;
-; Minecraft Reset Script v1.1
-; Author:   onvo
-; Modifications for SSG by:   logwet and xheb_
-; Other stuff + Multi Adaptation by Sheep, hi
-;
+﻿; SSG Custom Macro v1.2.0
+; Author: Sheep
+; Credits: logwet, xheb_, Peej, Specnr
 
-; Script Function:
-;  The following only apply inside the Minecraft window:
-;   1) When on the title screen, the "PgUp" key will create a world on Easy
-;   2) After loading in the world, "PgUp" will exit the world and then auto create another world on Easy
-;   3) To just exit the world and not auto create world, press "PgDn" on keyboard.
-;   4) To change the "PgUp", "PgDn" keybinds, change the keys before the double colon "::" and reload the script
+; Guide:
+; - Change the settings however you like, adjust your reset hotkeys (bottom of the script)
+; - Double click the file to run
+; - Enjoy
 
 
 #NoEnv
@@ -85,9 +80,12 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
-	Send {Esc}
-	DllCall("Sleep",UInt,delay)
-    send +{Tab}{Enter}
+  Send +{Tab}
+  Send {Enter}
+  Send {Esc}
+  DllCall("Sleep",UInt,10)
+  Send +{Tab}
+  Send {Enter}
 	CreateWorld(idx)
 return
 }
@@ -214,10 +212,6 @@ SetTitles() {
 #IfWinActive, Minecraft
 {
 *CapsLock::
-   ExitWorld()
-return
-
-PgDn::
    ExitWorld()
 return
 
