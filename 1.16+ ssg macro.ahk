@@ -80,18 +80,12 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
-<<<<<<< HEAD
   Send +{Tab}
   Send {Enter}
   Send {Esc}
   DllCall("Sleep",UInt,10)
   Send +{Tab}
   Send {Enter}
-=======
-	Send {Esc}
-	DllCall("Sleep",UInt,delay)
-    send +{Tab}{Enter}
->>>>>>> 21ec3ffe2d192a0a9ffb2059c5e0e12cdae91a82
 	CreateWorld(idx)
 return
 }
