@@ -1,6 +1,8 @@
 # SSG-custom-macro
 Simple and Customisable Macro for SSG
 
+Video Guide: https://youtu.be/UZ7NLBtfWQA
+
 ## Pre 1.16 Instructions:
 
 - Run SSG_ClickSetup.ahk if it's your first setup
