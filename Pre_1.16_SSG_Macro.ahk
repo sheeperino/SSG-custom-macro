@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro v1.2.0
+﻿; SSG Custom Macro v1.3.0-Pre1.16
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -23,7 +23,7 @@ global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.14.41\.
 
 global delay := 50 ; Delay between keypresses
 global switchDelay := 250
-global seed := 225874918561344128 ; This is where you put the seed
+global seed := 225874918561344128 ; Leave blank if not running SSG
 global countAttempts := True
 global worldMoving := True
 
@@ -43,19 +43,22 @@ CreateWorld(idx)
   {
     SetKeyDelay, -1
   	pid := PIDs[idx]
-  	MouseClick, Left, coords[2][1], coords[2][2] ; Singleplayer
-  	DllCall("Sleep",UInt,delay)
-  	MouseClick, Left, coords[3][1], coords[3][2] ; World list
-  	DllCall("Sleep",UInt,delay)
-  	MouseClick, Left, coords[4][1], coords[4][2], ahk_pid %pid% ; World options
-    DllCall("Sleep",UInt,delay)
-    MouseClick, Left, coords[5][1], coords[5][2] %pid%
-  	Send %seed% ; Seed
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
-      sleep, 50
+    n = 2
+    loop
+    {
+      MouseClick, Left, coords[n][1], coords[n][2]
+      DllCall("Sleep",UInt,delay)
+      n += 1
+      if (n == coords.MaxIndex() +1)
+        break
+    }
+    if (seed) {
+      Send %seed%
+      DllCall("Sleep",UInt,delay)
+    }
   	nextIdx := Mod(idx, instances) + 1
   	SwitchInstance(nextIdx)
+    ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
     if (worldMoving)
   	  MoveWorlds(idx)
 

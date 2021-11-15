@@ -1,4 +1,4 @@
-﻿; Press Left Control + Left Mouse Button to setup 1 coordinates
+﻿; Press Left Control + Left Mouse Button to setup coordinates
 
 #NoEnv
 #SingleInstance Force
@@ -8,7 +8,9 @@ CoordMode, Mouse, Window
 global X :=
 global Y :=
 global n = 1
-global screens = 5 ; Number of screens
+global screens = 5 ; SSG no hardcore = 5, RSG no hardcore = 3
+                   ; SSG hardcore    = 6, RSG hardcore    = 4
+                   ; add or remove extra ones if needed
 FileDelete, SSG_ClickCoords.txt
 FileAppend, global coords := [, SSG_ClickCoords.txt
 
