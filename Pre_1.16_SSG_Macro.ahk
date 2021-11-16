@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro v1.3.0-Pre1.16
+; SSG Custom Macro v1.3.1-Pre1.16
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -56,9 +56,11 @@ CreateWorld(idx)
       Send %seed%
       DllCall("Sleep",UInt,delay)
     }
-  	nextIdx := Mod(idx, instances) + 1
-  	SwitchInstance(nextIdx)
-    ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
+	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
+  	if (instances > 1){
+      nextIdx := Mod(idx, instances) + 1
+      SwitchInstance(nextIdx)
+    }
     if (worldMoving)
   	  MoveWorlds(idx)
 
