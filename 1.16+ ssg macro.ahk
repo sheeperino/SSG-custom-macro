@@ -1,11 +1,11 @@
-﻿; SSG Custom Macro v1.2.0
+; SSG Custom Macro v1.3.1
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
 ; Guide:
 ; - Change the settings however you like, adjust your reset hotkeys (bottom of the script)
 ; - Double click the file to run
-; - Enjoy
+; - Enjoy 
 
 
 #NoEnv
@@ -36,10 +36,14 @@ IfNotExist, %oldWorldsFolder%
 
 CreateWorld(idx)
 {
-  WinGetPos, X, Y, W, H, Minecraft
-  WaitMenuScreen(W, H)
   if (idx := GetActiveInstanceNum()) > 0
   {
+    WinGetPos, X, Y, W, H, Minecraft
+    WaitMenuScreen(W, H)
+    if (instances > 1){
+      nextIdx := Mod(idx, instances) + 1
+      SwitchInstance(nextIdx)
+    }
     SetKeyDelay, -1
   	pid := PIDs[idx]
   	ControlSend, ahk_parent, {Tab}{Enter}, ahk_pid %pid% ; Singleplayer
@@ -54,8 +58,6 @@ CreateWorld(idx)
   	DllCall("Sleep",UInt,delay)
   	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
       sleep, 50
-  	nextIdx := Mod(idx, instances) + 1
-  	SwitchInstance(nextIdx)
     if (worldMoving)
   	  MoveWorlds(idx)
 
