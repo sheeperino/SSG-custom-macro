@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro v1.2.0
+﻿; SSG Custom Macro v1.3.1-Pre1.16
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -10,19 +10,20 @@
 
 #NoEnv
 #SingleInstance Force
+#Include SSG_ClickCoords.txt
 Process, Priority, , A
 SetWorkingDir %A_ScriptDir%
 SetDefaultMouseSpeed, 0
 SetTitleMatchMode, 2
 CoordMode, Mouse, Window
 
-global oldWorldsFolder := "C:\Users\Sophie\Desktop\MultiMC\instances\1.12.2\.minecraft\oldWorlds\"
-global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.16.11\.minecraft\saves\"]
+global version := 1.14 ; You can leave this empty if not using 1.15
+global oldWorldsFolder := "C:\Users\Sophie\Desktop\MultiMC\instances\1.8.9unused\oldWorlds\"
+global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.14.41\.minecraft\saves\"]
 
 global delay := 50 ; Delay between keypresses
 global switchDelay := 250
-global seed := -5362871956303579298 ; This is where you put the seed
-global difficulty := 0 ; Normal (0), Hard (1), Peaceful (2), Easy (3)
+global seed := 225874918561344128 ; Leave blank if not running SSG
 global countAttempts := True
 global worldMoving := True
 
@@ -42,20 +43,24 @@ CreateWorld(idx)
   {
     SetKeyDelay, -1
   	pid := PIDs[idx]
-  	ControlSend, ahk_parent, {Tab}{Enter}, ahk_pid %pid% ; Singleplayer
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Tab 3}{Enter}, ahk_pid %pid% ; World list
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Tab 2}{Enter %difficulty%}, ahk_pid %pid% ; World options
-    DllCall("Sleep",UInt,delay)
-    ControlSend, ahk_parent, {Tab 4}{Enter}, ahk_pid %pid%
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Tab 3}%seed%, ahk_pid %pid% ; Seed
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
-      sleep, 50
-  	nextIdx := Mod(idx, instances) + 1
-  	SwitchInstance(nextIdx)
+    n = 2
+    loop
+    {
+      MouseClick, Left, coords[n][1], coords[n][2]
+      DllCall("Sleep",UInt,delay)
+      n += 1
+      if (n == coords.MaxIndex() +1)
+        break
+    }
+    if (seed) {
+      Send %seed%
+      DllCall("Sleep",UInt,delay)
+    }
+	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
+  	if (instances > 1){
+      nextIdx := Mod(idx, instances) + 1
+      SwitchInstance(nextIdx)
+    }
     if (worldMoving)
   	  MoveWorlds(idx)
 
@@ -80,12 +85,9 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
-  Send +{Tab}
-  Send {Enter}
   Send {Esc}
   DllCall("Sleep",UInt,10)
-  Send +{Tab}
-  Send {Enter}
+  MouseClick, Left, coords[1][1], coords[1][2]
 	CreateWorld(idx)
 return
 }
@@ -135,6 +137,17 @@ SwitchInstance(idx)
   send {Numpad%idx% up}
 }
 
+ReadCoords(){
+  i = 1
+  loop {
+    IniRead, X%i%, SSG.ini, Coords%i%, X%i%
+    IniRead, Y%i%, SSG.ini, Coords%i%, Y%i%
+    i += 1
+    if (i == 6){
+        break
+      }
+  }
+}
 RunHide(Command)
 {
 	OutputDebug, runhide
@@ -165,7 +178,7 @@ GetAllPIDs()
   {
     WinGet, pid, PID, % "ahk_id " all%A_Index%
     WinGetTitle, title, ahk_pid %pid%
-    if (InStr(title, "Minecraft* ") || InStr(title, "Instance") && !InStr(title, "Not Responding"))
+    if (InStr(title, "Minecraft 1.") || InStr(title, "Minecraft* 1.") || InStr(title, "Instance") && !InStr(title, "Not Responding"))
       Output .= pid "`n"
   }
   tmpPids := StrSplit(Output, "`n")
@@ -186,7 +199,10 @@ WaitMenuScreen(W, H)
    Loop {
       IfWinActive, Minecraft
       {
+        if (version == 1.15)
          PixelSearch, Px, Py, 0, 0, W, H, 0xFCFC00, 1, Fast RGB
+        else
+         PixelSearch, Px, Py, 0, 0, W, H, 0xFFFF00, 1, Fast RGB
          if (!ErrorLevel) {
             Sleep, 100
             IfWinActive, Minecraft
@@ -217,5 +233,10 @@ return
 
 *F12::
   SetTitles()
+return
+
++F9::
+  Run, SSG_ClickSetup.ahk
+  ExitApp
 return
 }
