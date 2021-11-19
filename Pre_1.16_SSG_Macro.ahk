@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro v1.3.1-Pre1.16
+﻿; SSG Custom Macro v1.3.2-Pre1.16
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -137,17 +137,6 @@ SwitchInstance(idx)
   send {Numpad%idx% up}
 }
 
-ReadCoords(){
-  i = 1
-  loop {
-    IniRead, X%i%, SSG.ini, Coords%i%, X%i%
-    IniRead, Y%i%, SSG.ini, Coords%i%, Y%i%
-    i += 1
-    if (i == 6){
-        break
-      }
-  }
-}
 RunHide(Command)
 {
 	OutputDebug, runhide
