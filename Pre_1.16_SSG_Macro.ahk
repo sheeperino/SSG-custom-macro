@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro v1.3.2-Pre1.16
+﻿; SSG Custom Macro v1.4.0-Pre1.16
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -30,6 +30,7 @@ global worldMoving := True
 global currInst := -1
 global PIDs := GetAllPIDs()
 global instances := SavesDirectories.MaxIndex()
+global title :=
 
 IfNotExist, %oldWorldsFolder%
   FileCreateDir %oldWorldsFolder%
@@ -37,7 +38,7 @@ IfNotExist, %oldWorldsFolder%
 
 CreateWorld(idx)
 {
-  WinGetPos, X, Y, W, H, Minecraft
+  WinGetPos, X, Y, W, H, %title%
   WaitMenuScreen(W, H)
   if (idx := GetActiveInstanceNum()) > 0
   {
@@ -56,7 +57,7 @@ CreateWorld(idx)
       Send %seed%
       DllCall("Sleep",UInt,delay)
     }
-	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
+	  Send {Enter} ; Create New World
   	if (instances > 1){
       nextIdx := Mod(idx, instances) + 1
       SwitchInstance(nextIdx)
@@ -167,7 +168,7 @@ GetAllPIDs()
   {
     WinGet, pid, PID, % "ahk_id " all%A_Index%
     WinGetTitle, title, ahk_pid %pid%
-    if (InStr(title, "Minecraft 1.") || InStr(title, "Minecraft* 1.") || InStr(title, "Instance") && !InStr(title, "Not Responding"))
+    if (InStr(title, "Instance") || InStr(title, "Minecraft 1.") || InStr(title, "Minecraft* 1.") || InStr(title, "b1.") || InStr(title, "a1.") && !InStr(title, "Not Responding"))
       Output .= pid "`n"
   }
   tmpPids := StrSplit(Output, "`n")
@@ -186,7 +187,7 @@ WaitMenuScreen(W, H)
 {
    start := A_TickCount
    Loop {
-      IfWinActive, Minecraft
+      IfWinActive, %title%
       {
         if (version == 1.15)
          PixelSearch, Px, Py, 0, 0, W, H, 0xFCFC00, 1, Fast RGB
@@ -194,7 +195,7 @@ WaitMenuScreen(W, H)
          PixelSearch, Px, Py, 0, 0, W, H, 0xFFFF00, 1, Fast RGB
          if (!ErrorLevel) {
             Sleep, 100
-            IfWinActive, Minecraft
+            IfWinActive, %title%
             {
                return
             }
@@ -214,7 +215,7 @@ SetTitles() {
   }
 }
 
-#IfWinActive, Minecraft
+If WinActive(title)
 {
 *CapsLock::
    ExitWorld()
