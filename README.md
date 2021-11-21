@@ -10,10 +10,10 @@ Video Guide: https://youtu.be/UZ7NLBtfWQA
 - When you are done it will automatically run Pre_1.16_SSG_Macro.ahk
 - To edit the coordinates again you can press LShift + F9
 - Read the comments inside the script for more info
+- Enjoy :)
 
 ## Planned Features:
 
 - Make a GUI replacement for the setup
 - Custom number of screens for click setup when pressing a hotkey
 
-- Enjoy :)
