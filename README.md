@@ -23,7 +23,6 @@
 - Easier PID setup
 - Add auto reset
 - Add multithreading support
-- Add fullscreen compatibility
 - Make the macro compatible with every version
 
 
