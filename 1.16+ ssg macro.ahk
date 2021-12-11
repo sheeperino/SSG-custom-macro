@@ -44,22 +44,8 @@ CreateWorld(idx)
       nextIdx := Mod(idx, instances) + 1
       SwitchInstance(nextIdx)
     }
-    SetKeyDelay, -1
   	pid := PIDs[idx]  
-  	ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Blind}{Tab 2}, ahk_pid %pid% ; World options
-    if (difficulty != 0) {
-      ControlSend, ahk_parent, {Enter %difficulty%}, ahk_pid %pid% ; Change difficulty
-      DllCall("Sleep",UInt,delay)
-    }
-    ControlSend, ahk_parent, {Blind}{Tab 4}{Enter}, ahk_pid %pid%
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Blind}{Tab 3}%seed%, ahk_pid %pid% ; Seed
-  	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Blind}{Enter}, ahk_pid %pid% ; Create New World
+  	Reset(pid)
       sleep, 50
     if (worldMoving)
   	  MoveWorlds(idx)
@@ -75,6 +61,25 @@ CreateWorld(idx)
       FileAppend, %WorldNumber%, SSG_attempts.txt
     }
   }
+}
+
+Reset(pid)
+{
+    SetKeyDelay, -1
+    ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Blind}{Tab 2}, ahk_pid %pid% ; World options
+    if (difficulty != 0) {
+      ControlSend, ahk_parent, {Enter %difficulty%}, ahk_pid %pid% ; Change difficulty
+      DllCall("Sleep",UInt,delay)
+    }
+    ControlSend, ahk_parent, {Blind}{Tab 4}{Enter}, ahk_pid %pid%
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Blind}{Tab 3}%seed%, ahk_pid %pid% ; Seed
+  	DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Blind}{Enter}, ahk_pid %pid% ; Create New World
 }
 
 ExitWorld()
