@@ -1,4 +1,4 @@
-; SSG Custom Macro v1.3.1
+; SSG Custom Macro 1.16+ v1.4.0-pre
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -40,23 +40,23 @@ CreateWorld(idx)
   {
     WinGetPos, X, Y, W, H, Minecraft
     WaitMenuScreen(W, H)
-    if (instances > 1){
+    if (instances > 1) {
       nextIdx := Mod(idx, instances) + 1
       SwitchInstance(nextIdx)
     }
     SetKeyDelay, -1
   	pid := PIDs[idx]
-  	ControlSend, ahk_parent, {Tab}{Enter}, ahk_pid %pid% ; Singleplayer
+  	ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
   	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Tab 3}{Enter}, ahk_pid %pid% ; World list
+  	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
   	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Tab 2}{Enter %difficulty%}, ahk_pid %pid% ; World options
+  	ControlSend, ahk_parent, {Blind}{Tab 2}{Enter %difficulty%}, ahk_pid %pid% ; World options
     DllCall("Sleep",UInt,delay)
-    ControlSend, ahk_parent, {Tab 4}{Enter}, ahk_pid %pid%
+    ControlSend, ahk_parent, {Blind}{Tab 4}{Enter}, ahk_pid %pid%
   	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Tab 3}%seed%, ahk_pid %pid% ; Seed
+  	ControlSend, ahk_parent, {Blind}{Tab 3}%seed%, ahk_pid %pid% ; Seed
   	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Enter}, ahk_pid %pid% ; Create New World
+  	ControlSend, ahk_parent, {Blind}{Enter}, ahk_pid %pid% ; Create New World
       sleep, 50
     if (worldMoving)
   	  MoveWorlds(idx)
@@ -82,12 +82,12 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
-  Send +{Tab}
-  Send {Enter}
-  Send {Esc}
+  Send {Blind}+{Tab}
+  Send {Blind}{Enter}
+  Send {Blind}{Esc}
   DllCall("Sleep",UInt,10)
-  Send +{Tab}
-  Send {Enter}
+  Send {Blind}+{Tab}
+  Send {Blind}{Enter}
 	CreateWorld(idx)
 return
 }
