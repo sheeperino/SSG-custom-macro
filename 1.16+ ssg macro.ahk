@@ -39,14 +39,13 @@ CreateWorld(idx)
 {
   if (idx := GetActiveInstanceNum()) > 0
   {
-    WinGetPos, X, Y, W, H, ahk_exe javaw.exe
-    Sleep(delay)
-    WaitMenuScreen(W, H)
+    pid := PIDs[idx]  
+    WaitMenuScreen(idx)
     if (instances > 1) {
       nextIdx := Mod(idx, instances) + 1
       SwitchInstance(nextIdx)
     }
-  	pid := PIDs[idx]  
+  	
   	Reset(pid)
       sleep, 50
     if (worldMoving)
@@ -91,7 +90,7 @@ ExitWorld()
     WinGetTitle, title, ahk_pid %pid%
     if (GetActiveInstanceNum() == idx)
       return
-
+      
   Send {Blind}{Shift Down}{Tab}{Shift Up}
   Send {Blind}{Enter}
   Send {Blind}{Esc}
@@ -198,27 +197,29 @@ GetAllPIDs()
 return orderedPIDs
 }
 
-WaitMenuScreen(W, H)
+WaitMenuScreen(idx)
 {
-   start := A_TickCount
-   Loop {
-      IfWinActive, ahk_exe javaw.exe
+  rawLogFile := StrReplace(savesDirectories[idx], "saves", "logs\latest.log")
+  StringTrimRight, logFile, rawLogFile, 1
+  numLines := 0
+  Loop, Read, %logFile%
+  {
+    numLines += 1
+  }
+  mainMenu := False
+  While (!mainMenu)
+  {
+    startTime := A_TickCount
+    Loop, Read, %logFile%
+    { 
+      if ((numLines - A_Index) < 1)
       {
-         PixelSearch, Px, Py, 0, 0, W, H, 0xFCFC00, 1, Fast RGB
-         if (!ErrorLevel) {
-            Sleep, 100
-            IfWinActive, ahk_exe javaw.exe
-            {
-               return
-            }
-         }
+        if (InStr(A_LoopReadLine, "Stopping worker threads")) {
+          mainMenu := True
+        }
       }
-      now := A_TickCount-start
-      if (now > 15000) {
-         ; Reload
-         Sleep 1000
-      }
-   }
+    }
+  }
 }
 
 SetTitles() {
