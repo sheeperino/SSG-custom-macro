@@ -45,7 +45,7 @@ CreateWorld(idx)
       SwitchInstance(nextIdx)
     }
     SetKeyDelay, -1
-  	pid := PIDs[idx]
+  	pid := PIDs[idx]  
   	ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
   	DllCall("Sleep",UInt,delay)
   	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
@@ -85,11 +85,11 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
-  Send {Blind}+{Tab}
+  Send {Blind}{Shift Down}{Tab}{Shift Up}
   Send {Blind}{Enter}
   Send {Blind}{Esc}
-  DllCall("Sleep",UInt,10)
-  Send {Blind}+{Tab}
+  sleep, 10
+  Send {Blind}{Shift Down}{Tab}{Shift Up}
   Send {Blind}{Enter}
 	CreateWorld(idx)
 return
