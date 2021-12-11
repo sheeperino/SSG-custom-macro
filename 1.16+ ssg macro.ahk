@@ -50,8 +50,11 @@ CreateWorld(idx)
   	DllCall("Sleep",UInt,delay)
   	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
   	DllCall("Sleep",UInt,delay)
-  	ControlSend, ahk_parent, {Blind}{Tab 2}{Enter %difficulty%}, ahk_pid %pid% ; World options
-    DllCall("Sleep",UInt,delay)
+  	ControlSend, ahk_parent, {Blind}{Tab 2}, ahk_pid %pid% ; World options
+    if (difficulty != 0) {
+      ControlSend, ahk_parent, {Enter %difficulty%}, ahk_pid %pid% ; Change difficulty
+      DllCall("Sleep",UInt,delay)
+    }
     ControlSend, ahk_parent, {Blind}{Tab 4}{Enter}, ahk_pid %pid%
   	DllCall("Sleep",UInt,delay)
   	ControlSend, ahk_parent, {Blind}{Tab 3}%seed%, ahk_pid %pid% ; Seed
@@ -158,7 +161,7 @@ Return Result
 
 GetAllPIDs()
 {
-  OutputDebug, getting all pids
+  OutputDebug, getting all pids 
   orderedPIDs := []
   loop, %instances%
     orderedPIDs.Push(-1)
