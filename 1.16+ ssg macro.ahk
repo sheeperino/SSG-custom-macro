@@ -146,12 +146,13 @@ SwitchInstance(idx)
 {
   currInst := idx
   pid := PIDs[idx]
-  WinActivate, LiveSplit
-  sleep, switchDelay
-  WinActivate, ahk_pid %pid%
-  send {Numpad%idx% down}
+  Sleep(switchDelay)
+  WinSet, AlwaysOnTop, On, ahk_pid %pid%
+  WinSet, AlwaysOnTop, Off, ahk_pid %pid%
+  Send {Numpad%idx% down}
   sleep, 50
-  send {Numpad%idx% up}
+  Send {Numpad%idx% up}
+  Send {Blind}{LButton}
 }
 
 RunHide(Command)
