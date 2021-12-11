@@ -39,6 +39,7 @@ CreateWorld(idx)
   if (idx := GetActiveInstanceNum()) > 0
   {
     WinGetPos, X, Y, W, H, Minecraft
+    DllCall("Sleep",UInt,delay)
     WaitMenuScreen(W, H)
     if (instances > 1) {
       nextIdx := Mod(idx, instances) + 1
