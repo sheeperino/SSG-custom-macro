@@ -17,7 +17,7 @@ SetTitleMatchMode, 2
 CoordMode, Mouse, Window
 
 global oldWorldsFolder := "C:\Users\Sophie\Desktop\MultiMC\instances\1.12.2\.minecraft\oldWorlds\"
-global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.16.11\.minecraft\saves\"]
+global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.17.11\.minecraft\saves\"]
 
 global delay := 50 ; Delay between keypresses
 global switchDelay := 250
@@ -38,7 +38,7 @@ CreateWorld(idx)
 {
   if (idx := GetActiveInstanceNum()) > 0
   {
-    WinGetPos, X, Y, W, H, Minecraft
+    WinGetPos, X, Y, W, H, ahk_exe javaw.exe
     DllCall("Sleep",UInt,delay)
     WaitMenuScreen(W, H)
     if (instances > 1) {
@@ -171,12 +171,10 @@ GetAllPIDs()
   orderedPIDs := []
   loop, %instances%
     orderedPIDs.Push(-1)
-  WinGet, all, list
+  WinGet, all, list, ahk_exe javaw.exe
   Loop, %all%
   {
     WinGet, pid, PID, % "ahk_id " all%A_Index%
-    WinGetTitle, title, ahk_pid %pid%
-    if (InStr(title, "Minecraft* ") || InStr(title, "Instance") && !InStr(title, "Not Responding"))
       Output .= pid "`n"
   }
   tmpPids := StrSplit(Output, "`n")
@@ -195,12 +193,12 @@ WaitMenuScreen(W, H)
 {
    start := A_TickCount
    Loop {
-      IfWinActive, Minecraft
+      IfWinActive, ahk_exe javaw.exe
       {
          PixelSearch, Px, Py, 0, 0, W, H, 0xFCFC00, 1, Fast RGB
          if (!ErrorLevel) {
             Sleep, 100
-            IfWinActive, Minecraft
+            IfWinActive, ahk_exe javaw.exe
             {
                return
             }
@@ -220,7 +218,7 @@ SetTitles() {
   }
 }
 
-#IfWinActive, Minecraft
+#IfWinActive, ahk_exe javaw.exe
 {
 *CapsLock::
    ExitWorld()
