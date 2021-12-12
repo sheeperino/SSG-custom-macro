@@ -20,10 +20,11 @@
 - Add Hardcore mode toggle
 - Add Pause when loading a world
 - Remove the need for saves folder
-- Easier PID setup
 - Add auto reset
 - Add multithreading support
 - Make the macro compatible with every version
+- Fullscreen Support
+- Add Click Setup
 
 
 ## Contact me!
