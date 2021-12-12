@@ -7,6 +7,7 @@ Video Guide: https://youtu.be/UZ7NLBtfWQA
 
 - Run SSG_ClickSetup.ahk if it's your first setup
 - Press LControl + Left Mouse Button to setup the coordinates on each screen
+- For the last step (Create New World) press LControl + Enter
 - When you are done it will automatically run Pre_1.16_SSG_Macro.ahk
 - To edit the coordinates again you can press LShift + F9
 - Read the comments inside the script for more info
@@ -15,5 +16,3 @@ Video Guide: https://youtu.be/UZ7NLBtfWQA
 ## Planned Features:
 
 - Make a GUI replacement for the setup
-- Custom number of screens for click setup when pressing a hotkey
-
