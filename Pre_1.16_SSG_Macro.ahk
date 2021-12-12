@@ -21,6 +21,7 @@ global version := 1.14 ; You can leave this empty if not using 1.15
 global oldWorldsFolder := "C:\Users\Sophie\Desktop\MultiMC\instances\1.8.9unused\oldWorlds\"
 global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.14.41\.minecraft\saves\"]
 
+global delayType := "Accurate" ; Accurate or Standard
 global delay := 50 ; Delay between keypresses
 global switchDelay := 250
 global seed := 225874918561344128 ; Leave blank if not running SSG
@@ -37,30 +38,18 @@ IfNotExist, %oldWorldsFolder%
 
 CreateWorld(idx)
 {
-  WinGetPos, X, Y, W, H, ahk_exe javaw.exe
-  WaitMenuScreen(W, H)
   if (idx := GetActiveInstanceNum()) > 0
   {
-    SetKeyDelay, -1
   	pid := PIDs[idx]
-    n = 2
-    loop
-    {
-      MouseClick, Left, coords[n][1], coords[n][2]
-      DllCall("Sleep",UInt,delay)
-      n += 1
-      if (n == coords.MaxIndex() +1)
-        break
-    }
-    if (seed) {
-      Send %seed%
-      DllCall("Sleep",UInt,delay)
-    }
-	  Send {Enter} ; Create New World
-  	if (instances > 1){
+    WinGetPos, X, Y, W, H, ahk_exe javaw.exe
+    WaitMenuScreen(W, H)
+    
+    Reset()
+    if (instances > 1) {
       nextIdx := Mod(idx, instances) + 1
       SwitchInstance(nextIdx)
     }
+      sleep, 50
     if (worldMoving)
   	  MoveWorlds(idx)
 
@@ -77,6 +66,25 @@ CreateWorld(idx)
   }
 }
 
+Reset()
+{
+  SetKeyDelay, -1
+  n = 2
+  loop
+  {
+    MouseClick, Left, coords[n][1], coords[n][2]
+    Sleep(delay)
+    n += 1
+    if (n == coords.MaxIndex() +1)
+      break
+  }
+  if (seed) {
+    Send %seed%
+    Sleep(delay)
+  }
+  Send {Enter} ; Create New World
+}
+
 ExitWorld()
 {
   SetKeyDelay, 1
@@ -86,10 +94,17 @@ ExitWorld()
       return
 
   Send {Esc}
-  DllCall("Sleep",UInt,10)
+  sleep, 10
   MouseClick, Left, coords[1][1], coords[1][2]
 	CreateWorld(idx)
 return
+}
+
+Sleep(time) {
+  if (delayType == "Accurate")
+    DllCall("Sleep",UInt,time)
+  else
+    Sleep, time
 }
 
 MoveWorlds(idx)
@@ -129,12 +144,13 @@ SwitchInstance(idx)
 {
   currInst := idx
   pid := PIDs[idx]
-  WinActivate, LiveSplit
-  sleep, switchDelay
-  WinActivate, ahk_pid %pid%
-  send {Numpad%idx% down}
+  Sleep(switchDelay)
+  WinSet, AlwaysOnTop, On, ahk_pid %pid%
+  WinSet, AlwaysOnTop, Off, ahk_pid %pid%
+  Send {Numpad%idx% down}
   sleep, 50
-  send {Numpad%idx% up}
+  Send {Numpad%idx% up}
+  Send {Blind}{RButton}
 }
 
 RunHide(Command)
@@ -191,7 +207,7 @@ WaitMenuScreen(W, H)
         else
          PixelSearch, Px, Py, 0, 0, W, H, 0xFFFF00, 1, Fast RGB
          if (!ErrorLevel) {
-            Sleep, 100
+            Sleep(100)
             IfWinActive, ahk_exe javaw.exe
             {
                return
