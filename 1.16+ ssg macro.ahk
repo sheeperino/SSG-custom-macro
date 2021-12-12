@@ -1,4 +1,4 @@
-; SSG Custom Macro 1.16+ v1.4.0-pre
+; SSG Custom Macro 1.16+ v1.4.1
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -85,12 +85,11 @@ Reset(pid)
 
 ExitWorld()
 {
-  SetKeyDelay, 1
-  pid := PIDs[idx]
+  SetKeyDelay, -1
     WinGetTitle, title, ahk_pid %pid%
     if (GetActiveInstanceNum() == idx)
       return
-      
+
   Send {Blind}{Shift Down}{Tab}{Shift Up}
   Send {Blind}{Enter}
   Send {Blind}{Esc}
@@ -151,7 +150,7 @@ SwitchInstance(idx)
   Send {Numpad%idx% down}
   sleep, 50
   Send {Numpad%idx% up}
-  Send {Blind}{LButton}
+  Send {Blind}{RButton}
 }
 
 RunHide(Command)
