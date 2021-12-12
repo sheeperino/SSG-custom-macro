@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro v1.4.0-Pre1.16
+﻿; SSG Custom Macro Pre1.16 v1.4.1
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -30,7 +30,6 @@ global worldMoving := True
 global currInst := -1
 global PIDs := GetAllPIDs()
 global instances := SavesDirectories.MaxIndex()
-global title :=
 
 IfNotExist, %oldWorldsFolder%
   FileCreateDir %oldWorldsFolder%
@@ -38,7 +37,7 @@ IfNotExist, %oldWorldsFolder%
 
 CreateWorld(idx)
 {
-  WinGetPos, X, Y, W, H, %title%
+  WinGetPos, X, Y, W, H, ahk_exe javaw.exe
   WaitMenuScreen(W, H)
   if (idx := GetActiveInstanceNum()) > 0
   {
@@ -163,12 +162,10 @@ GetAllPIDs()
   orderedPIDs := []
   loop, %instances%
     orderedPIDs.Push(-1)
-  WinGet, all, list
+  WinGet, all, list, ahk_exe javaw.exe
   Loop, %all%
   {
     WinGet, pid, PID, % "ahk_id " all%A_Index%
-    WinGetTitle, title, ahk_pid %pid%
-    if (InStr(title, "Instance") || InStr(title, "Minecraft 1.") || InStr(title, "Minecraft* 1.") || InStr(title, "b1.") || InStr(title, "a1.") && !InStr(title, "Not Responding"))
       Output .= pid "`n"
   }
   tmpPids := StrSplit(Output, "`n")
@@ -187,7 +184,7 @@ WaitMenuScreen(W, H)
 {
    start := A_TickCount
    Loop {
-      IfWinActive, %title%
+      IfWinActive, ahk_exe javaw.exe
       {
         if (version == 1.15)
          PixelSearch, Px, Py, 0, 0, W, H, 0xFCFC00, 1, Fast RGB
@@ -195,7 +192,7 @@ WaitMenuScreen(W, H)
          PixelSearch, Px, Py, 0, 0, W, H, 0xFFFF00, 1, Fast RGB
          if (!ErrorLevel) {
             Sleep, 100
-            IfWinActive, %title%
+            IfWinActive, ahk_exe javaw.exe
             {
                return
             }
@@ -215,7 +212,7 @@ SetTitles() {
   }
 }
 
-If WinActive(title)
+#IfWinActive, ahk_exe javaw.exe
 {
 *CapsLock::
    ExitWorld()
