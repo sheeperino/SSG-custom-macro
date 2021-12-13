@@ -69,6 +69,7 @@ CreateWorld(idx)
 Reset()
 {
   SetKeyDelay, -1
+  Sleep(delay)
   n = 2
   loop
   {
