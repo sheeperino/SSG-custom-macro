@@ -67,7 +67,8 @@ CreateWorld(idx)
 Reset(pid)
 {
     SetKeyDelay, -1
-    ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
+        Sleep(delay)
+        ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
   	Sleep(delay)
   	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
   	Sleep(delay)
