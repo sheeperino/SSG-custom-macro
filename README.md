@@ -13,6 +13,7 @@
 - Tracks attempts in a text file
 - Reset in the pause menu
 - Change window titles with F12, allowing for an easier OBS setup
+- Daily attempts counter (requires each script to be put in a separate folder) 
 
 
 ## Planned Features
