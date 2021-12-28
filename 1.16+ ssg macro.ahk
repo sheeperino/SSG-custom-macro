@@ -20,12 +20,14 @@ global oldWorldsFolder := "C:\Users\Sophie\Desktop\MultiMC\instances\1.12.2\.min
 global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.17.11\.minecraft\saves\"]
 
 global delayType := "Accurate" ; Accurate or Standard
-global delay := 50 ; Delay between keypresses
-global switchDelay := 250
+global delay := 60 ; Delay between keypresses
+global switchDelay := 0
+global seedDelay := 60 ; Delay before typing the seed
 global seed := -5362871956303579298 ; This is where you put the seed
 global difficulty := 0 ; Normal (0), Hard (1), Peaceful (2), Easy (3)
 global countAttempts := True
 global worldMoving := True
+global attemptsFile := "Macro_Attempts_1.16+.txt" ; Name of the attempts file
 
 global currInst := -1
 global PIDs := GetAllPIDs()
@@ -52,23 +54,15 @@ CreateWorld(idx)
   	  MoveWorlds(idx)
 
     if (countAttempts)
-    {
-      FileRead, WorldNumber, SSG_attempts.txt
-      if (ErrorLevel)
-        WorldNumber = 0
-      else
-        FileDelete, SSG_attempts.txt
-      WorldNumber += 1
-      FileAppend, %WorldNumber%, SSG_attempts.txt
-    }
+      CountAttempts()
   }
 }
 
 Reset(pid)
 {
     SetKeyDelay, -1
-        Sleep(delay)
-        ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
+	Sleep(delay)
+    	ControlSend, ahk_parent, {Blind}{Tab}{Enter}, ahk_pid %pid% ; Singleplayer
   	Sleep(delay)
   	ControlSend, ahk_parent, {Blind}{Tab 3}{Enter}, ahk_pid %pid% ; World list
   	Sleep(delay)
@@ -77,10 +71,12 @@ Reset(pid)
       ControlSend, ahk_parent, {Enter %difficulty%}, ahk_pid %pid% ; Change difficulty
       Sleep(delay)
     }
-    ControlSend, ahk_parent, {Blind}{Tab 4}{Enter}, ahk_pid %pid%
+    ControlSend, ahk_parent, {Blind}{Tab 4}{Enter}, ahk_pid %pid% ; More World Options
   	Sleep(delay)
-  	ControlSend, ahk_parent, {Blind}{Tab 3}%seed%, ahk_pid %pid% ; Seed
-  	Sleep(delay)
+  	ControlSend, ahk_parent, {Blind}{Tab 3}, ahk_pid %pid%
+  	Sleep(seedDelay)
+    ControlSend, ahk_parent, %seed%, ahk_pid %pid% ; Seed
+    Sleep(delay)
   	ControlSend, ahk_parent, {Blind}{Enter}, ahk_pid %pid% ; Create New World
 }
 
@@ -117,6 +113,42 @@ MoveWorlds(idx)
     If (InStr(A_LoopFileName, "New World"))
       FileMoveDir, %dir%%A_LoopFileName%, %oldWorldsFolder%%A_LoopFileName%%A_NowUTC%, R
   }
+}
+
+CountAttempts() {
+  file := FileOpen(attemptsFile, "rw")
+
+  t := SubStr(file.ReadLine(), 1, -1)     
+  if t is not integer
+      t := 0
+  s := file.ReadLine()
+  if s is not integer
+      s := 0
+
+  tFile := FileOpen("attempts_time.txt", "rw")
+  tOutput := tFile.Read()
+  if tOutput is not integer
+  {
+    tOutput := A_Now
+    tFile.Write(tOutput)
+  }
+  tFile.Close()
+
+  tOutput += 24, hours
+  if (A_Now >= tOutput) {
+    tFile := FileOpen("attempts_time.txt", "w")
+    tFile.Write()
+    tFile.Close()
+
+    file := FileOpen(attemptsFile, "w")
+    file.Seek(StrLen(t)+1)
+    file.Write(s := 0)
+  }
+  file := FileOpen(attemptsFile, "w")
+  file.WriteLine(t+1)
+  file.Write(s+1)
+
+  file.Close()
 }
 
 GetActiveInstanceNum() {
@@ -237,4 +269,8 @@ return
 *F12::
   SetTitles()
 return
+
+*!End::
+  MsgBox, Script terminated by user
+  ExitApp
 }
