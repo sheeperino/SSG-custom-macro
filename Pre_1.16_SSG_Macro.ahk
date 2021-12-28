@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro Pre1.16 v1.4.1
+﻿; SSG Custom Macro Pre1.16 v1.5.0
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -19,14 +19,16 @@ CoordMode, Mouse, Window
 
 global version := 1.14 ; You can leave this empty if not using 1.15
 global oldWorldsFolder := "C:\Users\Sophie\Desktop\MultiMC\instances\1.8.9unused\oldWorlds\"
-global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.14.41\.minecraft\saves\"]
+global SavesDirectories := ["C:\Users\Sophie\Desktop\MultiMC\instances\1.8.91\.minecraft\saves\"]
 
 global delayType := "Accurate" ; Accurate or Standard
-global delay := 50 ; Delay between keypresses
-global switchDelay := 250
+global delay := 60 ; Delay between keypresses
+global switchDelay := 0
+global seedDelay := 60 ; Delay before typing the seed 
 global seed := 225874918561344128 ; Leave blank if not running SSG
 global countAttempts := True
 global worldMoving := True
+global attemptsFile := "Macro_Attempts_Pre1.16.txt" ; Name of the attempts file
 
 global currInst := -1
 global PIDs := GetAllPIDs()
@@ -54,15 +56,7 @@ CreateWorld(idx)
   	  MoveWorlds(idx)
 
     if (countAttempts)
-    {
-      FileRead, WorldNumber, SSG_attempts.txt
-      if (ErrorLevel)
-        WorldNumber = 0
-      else
-        FileDelete, SSG_attempts.txt
-      WorldNumber += 1
-      FileAppend, %WorldNumber%, SSG_attempts.txt
-    }
+      CountAttempts()
   }
 }
 
@@ -74,12 +68,13 @@ Reset()
   loop
   {
     MouseClick, Left, coords[n][1], coords[n][2]
-    Sleep(delay)
     n += 1
-    if (n == coords.MaxIndex() +1)
+    if (n > coords.MaxIndex())
       break
+    Sleep(delay)
   }
   if (seed) {
+    Sleep(seedDelay)
     Send %seed%
     Sleep(delay)
   }
@@ -117,6 +112,42 @@ MoveWorlds(idx)
     If (InStr(A_LoopFileName, "New World"))
       FileMoveDir, %dir%%A_LoopFileName%, %oldWorldsFolder%%A_LoopFileName%%A_NowUTC%, R
   }
+}
+
+CountAttempts() {
+  file := FileOpen(attemptsFile, "rw")
+
+  t := SubStr(file.ReadLine(), 1, -1)     
+  if t is not integer
+      t := 0
+  s := file.ReadLine()
+  if s is not integer
+      s := 0
+
+  tFile := FileOpen("attempts_time.txt", "rw")
+  tOutput := tFile.Read()
+  if tOutput is not integer
+  {
+    tOutput := A_Now
+    tFile.Write(tOutput)
+  }
+  tFile.Close()
+
+  tOutput += 24, hours
+  if (A_Now >= tOutput) {
+    tFile := FileOpen("attempts_time.txt", "w")
+    tFile.Write()
+    tFile.Close()
+
+    file := FileOpen(attemptsFile, "w")
+    file.Seek(StrLen(t)+1)
+    file.Write(s := 0)
+  }
+  file := FileOpen(attemptsFile, "w")
+  file.WriteLine(t+1)
+  file.Write(s+1)
+
+  file.Close()
 }
 
 GetActiveInstanceNum() {
@@ -239,8 +270,13 @@ return
   SetTitles()
 return
 
-+F9::
+*+F9::
   Run, SSG_ClickSetup.ahk
+  ExitApp
+return
+
+*!End::
+  MsgBox, Script terminated by user
   ExitApp
 return
 }
