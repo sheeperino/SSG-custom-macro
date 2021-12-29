@@ -1,4 +1,4 @@
-; SSG Custom Macro 1.16+ v1.5.0
+; SSG Custom Macro 1.16+ v1.5.1
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -10,6 +10,7 @@
 
 #NoEnv
 #SingleInstance Force
+#MaxThreadsPerHotkey 100
 Process, Priority, , A
 SetWorkingDir %A_ScriptDir%
 SetDefaultMouseSpeed, 0
@@ -75,7 +76,7 @@ Reset(pid)
   	Sleep(delay)
   	ControlSend, ahk_parent, {Blind}{Tab 3}, ahk_pid %pid%
   	Sleep(seedDelay)
-    ControlSend, ahk_parent, %seed%, ahk_pid %pid% ; Seed
+    ControlSend, ahk_parent, {Blind}{Text}%seed%, ahk_pid %pid% ; Seed
     Sleep(delay)
   	ControlSend, ahk_parent, {Blind}{Enter}, ahk_pid %pid% ; Create New World
 }
