@@ -1,4 +1,4 @@
-﻿; SSG Custom Macro Pre1.16 v1.5.0
+﻿; SSG Custom Macro Pre1.16 v1.5.1
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
@@ -11,6 +11,7 @@
 #NoEnv
 #SingleInstance Force
 #Include SSG_ClickCoords.txt
+#MaxThreadsPerHotkey 100
 Process, Priority, , A
 SetWorkingDir %A_ScriptDir%
 SetDefaultMouseSpeed, 0
@@ -75,10 +76,10 @@ Reset()
   }
   if (seed) {
     Sleep(seedDelay)
-    Send %seed%
+    Send {Blind}{Text}%seed%
     Sleep(delay)
   }
-  Send {Enter} ; Create New World
+  Send {Blind}{Enter} ; Create New World
 }
 
 ExitWorld()
@@ -89,7 +90,7 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
-  Send {Esc}
+  Send {Blind}{Esc}
   sleep, 10
   MouseClick, Left, coords[1][1], coords[1][2]
 	CreateWorld(idx)
