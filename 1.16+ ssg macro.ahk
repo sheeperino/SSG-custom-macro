@@ -126,7 +126,7 @@ CountAttempts() {
   if s is not integer
       s := 0
 
-  tFile := FileOpen("attempts_time.txt", "rw")
+  tFile := FileOpen("attempts_time_" . attemptsFile, "rw")
   tOutput := tFile.Read()
   if tOutput is not integer
   {
@@ -137,7 +137,7 @@ CountAttempts() {
 
   tOutput += 24, hours
   if (A_Now >= tOutput) {
-    tFile := FileOpen("attempts_time.txt", "w")
+    tFile := FileOpen("attempts_time_" . attemptsFile, "w")
     tFile.Write()
     tFile.Close()
 
