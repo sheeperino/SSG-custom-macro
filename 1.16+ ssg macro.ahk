@@ -167,7 +167,6 @@ ChangeSettings(idx) {
     if (currentRD != rd) {  
       result := currentRD - rd
       if (result < 0) { 
-        OutputDebug, % "increasing rd"
         result := abs(result)
         Send, {Blind}{F3 down}{f %result%}{F3 up}
       }
