@@ -29,6 +29,12 @@ global difficulty := 0 ; Normal (0), Hard (1), Peaceful (2), Easy (3)
 global countAttempts := True
 global worldMoving := True
 global attemptsFile := "Macro_Attempts_1.16+.txt" ; Name of the attempts file
+global settingsReset := True ; Whether or not to change your settings back
+global fov := 70 ; Your preferred FOV
+global rd := 2 ; Your preferred Render Distance
+
+
+; DO NOT EDIT
 
 global currInst := -1
 global PIDs := GetAllPIDs()
@@ -40,6 +46,14 @@ IfNotExist, %oldWorldsFolder%
 for i, dir in SavesDirectories {
   if (SubStr(dir, 0)) != "\"
     SavesDirectories[i] := dir . "\"
+}
+
+if (settingsReset) {
+  global fovLine
+  global rdLine
+  global currentFov
+  global currentRD
+  GetOptionsLines()
 }
 
 
@@ -93,6 +107,9 @@ ExitWorld()
     if (GetActiveInstanceNum() == idx)
       return
 
+  idx := GetActiveInstanceNum()
+  ChangeSettings(idx)
+  
   Send {Blind}{Shift Down}{Tab}{Shift Up}
   Send {Blind}{Enter}
   Send {Blind}{Esc}
@@ -119,6 +136,60 @@ MoveWorlds(idx)
     If (InStr(A_LoopFileName, "New World"))
       FileMoveDir, %dir%%A_LoopFileName%, %oldWorldsFolder%%A_LoopFileName%%A_NowUTC%, R
   }
+}
+
+GetOptionsLines() {
+  optionsFile := StrReplace(SavesDirectories[1], "saves\", "options.txt")
+  fovLine := 0
+  rdLine := 0
+  Loop, read, %optionsFile%
+  {
+    If InStr(A_LoopReadLine, "fov:")
+      fovLine := A_Index
+    If InStr(A_LoopReadLine, "renderDistance:")
+      rdLine := A_Index
+  } Until (fovLine and rdLine)
+}
+
+GetCurrentOptions(idx) {
+    optionsFile := StrReplace(SavesDirectories[idx], "saves\", "options.txt")
+    FileReadLine, tmp, %optionsFile%, %fovLine%
+    tmp := StrSplit(tmp, ":")
+    currentFov := tmp[2] * 40 + 70
+    FileReadLine, tmp, %optionsFile%, %rdLine%
+    tmp := StrSplit(tmp, ":")
+    currentRD := tmp[2]
+}
+
+ChangeSettings(idx) {
+    GetCurrentOptions(idx)
+    OutputDebug, % currentFov ", " currentRD
+    if (currentRD != rd) {  
+      result := currentRD - rd
+      if (result < 0) { 
+        OutputDebug, % "increasing rd"
+        result := abs(result)
+        Send, {Blind}{F3 down}{f %result%}{F3 up}
+      }
+      else
+        Send, {Blind}{Shift down}{F3 down}{f %result%}{F3 up}{Shift up}
+    }
+
+    if  (currentFov != fov) {
+        Send {Esc}
+        Send {Tab 6}
+        Send {Enter}
+        Send {Tab}
+        result := round((fov - currentFov)*1.775)
+        if (result < 0) {
+            result := abs(result)
+            SendInput, {Blind}{Left %result%}
+        }
+        else
+            SendInput, {Blind}{Right %result%}
+
+        Send {Esc}
+    }
 }
 
 CountAttempts() {
