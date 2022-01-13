@@ -1,4 +1,4 @@
-; SSG Custom Macro 1.16+ v1.5.1
+; SSG Custom Macro 1.16+ v1.6.0
 ; Author: Sheep
 ; Credits: logwet, xheb_, Peej, Specnr
 
