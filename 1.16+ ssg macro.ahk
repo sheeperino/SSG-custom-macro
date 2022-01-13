@@ -37,6 +37,11 @@ global instances := SavesDirectories.MaxIndex()
 IfNotExist, %oldWorldsFolder%
   FileCreateDir %oldWorldsFolder%
 
+for i, dir in SavesDirectories {
+  if (SubStr(dir, 0)) != "\"
+    SavesDirectories[i] := dir . "\"
+}
+
 
 CreateWorld(idx)
 {
