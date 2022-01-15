@@ -14,6 +14,7 @@
 - Reset in the pause menu
 - Change window titles with F12, allowing for an easier OBS setup
 - Daily attempts counter
+- Automatically resets your settings to your favorite ones
 
 ## Planned Features
 
