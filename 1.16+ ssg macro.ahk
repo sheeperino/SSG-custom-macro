@@ -140,8 +140,6 @@ MoveWorlds(idx)
 
 GetOptionsLines() {
   optionsFile := StrReplace(SavesDirectories[1], "saves\", "options.txt")
-  fovLine := 0
-  rdLine := 0
   Loop, read, %optionsFile%
   {
     If InStr(A_LoopReadLine, "fov:")
@@ -163,30 +161,35 @@ GetCurrentOptions(idx) {
 
 ChangeSettings(idx) {
     GetCurrentOptions(idx)
+    changeRD := (currentRD != rd)
+    changeFov := (currentFov != fov)
     OutputDebug, % currentFov ", " currentRD
-    if (currentRD != rd) {  
-      result := currentRD - rd
-      if (result < 0) { 
-        result := abs(result)
-        Send, {Blind}{F3 down}{f %result%}{F3 up}
-      }
-      else
-        Send, {Blind}{Shift down}{F3 down}{f %result%}{F3 up}{Shift up}
+
+    if (changeRD) {
+      result := rd - 2
+      Send, {Blind}{Shift down}{F3 down}{f 32}{F3 up}{Shift up}
+      Send, {Blind}{F3 down}{f %result%}{F3 up}
     }
 
-    if  (currentFov != fov) {
+    if (changeFov || changeRD) {
         Send {Esc}
         Send {Tab 6}
         Send {Enter}
         Send {Tab}
-        result := round((fov - currentFov)*1.775)
-        if (result < 0) {
-            result := abs(result)
-            SendInput, {Blind}{Left %result%}
+        if (changeFov) {
+          result := round((fov - currentFov)*1.775)
+          if (result < 0) {
+              result := abs(result)
+              SendInput, {Blind}{Left %result%}
+          }
+          else
+              SendInput, {Blind}{Right %result%}
         }
-        else
-            SendInput, {Blind}{Right %result%}
-
+        if (changeRD) {
+          Send {Tab 5}
+          Send {Enter}
+          Send {Esc}
+        }
         Send {Esc}
     }
 }
