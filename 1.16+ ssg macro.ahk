@@ -121,7 +121,9 @@ return
 }
 
 Sleep(time) {
-  if (delayType == "Accurate")
+  if (time <= 0)
+    return
+  else if (delayType == "Accurate")
     DllCall("Sleep",UInt,time)
   else
     Sleep, time
